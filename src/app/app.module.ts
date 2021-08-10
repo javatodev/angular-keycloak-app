@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -13,6 +13,24 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
+import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
+
+function initializeKeycloak (keycloak: KeycloakService) {
+  return () =>
+    keycloak.init({
+      config: {
+        url: 'http://192.168.8.108:8085/auth',
+        realm: 'angular-app-realm',
+        clientId: 'angular-js-app-client',
+      },
+      initOptions: {
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri:
+          window.location.origin + '/assets/silent-check-sso.html',
+      },
+      loadUserProfileAtStartUp: true
+    });
+}
 
 @NgModule({
   declarations: [
@@ -26,6 +44,7 @@ import {MatListModule} from '@angular/material/list';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    KeycloakAngularModule,
     MatToolbarModule,
     MatButtonModule,
     MatGridListModule,
@@ -33,7 +52,14 @@ import {MatListModule} from '@angular/material/list';
     MatToolbarModule,
     MatListModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      multi: true,
+      deps: [KeycloakService],
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
