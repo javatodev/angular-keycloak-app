@@ -1,0 +1,15 @@
+<mat-toolbar>
+  <span>Angular Keycloak</span>
+  <span class="example-spacer"></span>
+
+  <span class="logged-user">Logged in as {{loggedUserName}}</span>
+  <a class="app-nav-icon" routerLink="admin">Admin Area</a>
+  <a class="app-nav-icon" routerLink="user">User Area</a>
+  <button class="app-nav-icon" mat-raised-button color="primary" (click)="logout()">Logout</button>
+</mat-toolbar>
+
+<mat-toolbar-row class="mat-toolbar-row">
+  <div>
+    <router-outlet></router-outlet>
+  </div>
+</mat-toolbar-row>
